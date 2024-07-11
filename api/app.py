@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from stytch import B2BClient
 import requests
+import dotenv
 
 # load the .env file
 dotenv.load_dotenv()
