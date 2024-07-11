@@ -25,7 +25,7 @@ if STYTCH_SECRET is None:
     sys.exit("STYTCH_SECRET env variable must be set before running")
 
 # NOTE: Set environment to "live" if you want to hit the live api
-client = stytch.Client(
+client = B2BClient(
     project_id=STYTCH_PROJECT_ID,
     secret=STYTCH_SECRET,
     environment="test",
