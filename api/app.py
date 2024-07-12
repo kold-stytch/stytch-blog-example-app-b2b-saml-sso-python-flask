@@ -17,8 +17,6 @@ PORT = int(os.getenv("PORT", "3000"))
 # Load the Stytch credentials, but quit if they aren't defined
 STYTCH_PROJECT_ID = os.getenv("STYTCH_PROJECT_ID")
 STYTCH_SECRET = os.getenv("STYTCH_SECRET")
-STYTCH_ORG_ID = os.getenv("STYTCH_ORG_ID")
-REACT_APP_STYTCH_PUBLIC_TOKEN = os.getenv("REACT_APP_STYTCH_PUBLIC_TOKEN")
 if STYTCH_PROJECT_ID is None:
     sys.exit("STYTCH_PROJECT_ID env variable must be set before running")
 if STYTCH_SECRET is None:
@@ -55,28 +53,14 @@ def authenticate():
     token = request.json.get("token")
     tokenType = request.json.get("type")
     try:
-        if tokenType == "sso":
-            resp = client.sso.authenticate(sso_token=token)
-            return handle_authenticate_response(resp), 200
-        else:
-            resp = client.magic_links.authenticate(magic_links_token=token)
-            return handle_authenticate_response(resp), 200
+        # if tokenType == "sso":
+        resp = client.sso.authenticate(sso_token=token)
+        return handle_authenticate_response(resp), 200
+    # else:
+    #     resp = client.magic_links.authenticate(magic_links_token=token)
+    #     return handle_authenticate_response(resp), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
-
-
-@app.route("/send-magic-link", methods=["POST"])
-def send_magic_link():
-    email_address = request.json.get("email_address")
-
-    try:
-        client.magic_links.email.login_or_signup(
-            organization_id=STYTCH_ORG_ID,
-            email_address=email_address,
-        )
-        return "success"
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 
 def handle_authenticate_response(resp):
