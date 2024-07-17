@@ -1,7 +1,9 @@
-import { useStytchMemberSession } from '@stytch/react/b2b';
-import React, { useEffect, useState } from 'react';
+import { Button, Container } from '@mui/material';
+import { useStytchB2BClient, useStytchMemberSession } from '@stytch/react/b2b';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Route, Routes, useParams } from 'react-router-dom';
 import './App.css';
+import ProductsList from './ProductsList';
 
 function B2BLogin() {
   const { orgId } = useParams();
@@ -38,15 +40,33 @@ function Home() {
 }
 
 function App() {
+  const stytch = useStytchB2BClient();
   const { session } = useStytchMemberSession();
-  //const { member } = useStytchMember();
+
+  const logout = useCallback(() => {
+    stytch.session.revoke();
+  }, [stytch]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      {/* <h1>Hello {member?.name}</h1> */}
-      <Route path="/org/:orgId" element={<B2BLogin />} />
-    </Routes>
+    <Container>
+      {session && (
+        <>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={logout}
+          sx={{ position: "absolute", top: 16, right: 16 }}
+        >
+          Sign Out
+        </Button>
+      </>
+      )}
+
+      <Routes>
+        <Route path="/org/:orgId" element={<B2BLogin />} />
+        <Route path="/" element={session ? <ProductsList /> : <Home />} />
+      </Routes>
+    </Container>
   );
 }
 
