@@ -7,7 +7,6 @@ from stytch import B2BClient
 
 from stytch.b2b.models.organizations import SearchQuery, SearchQueryOperator
 
-import requests
 import dotenv
 
 # load the .env file
