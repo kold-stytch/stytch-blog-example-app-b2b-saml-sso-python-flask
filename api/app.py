@@ -20,10 +20,13 @@ PORT = int(os.getenv("PORT", "3000"))
 # Load the Stytch credentials, but quit if they aren't defined
 STYTCH_PROJECT_ID = os.getenv("STYTCH_PROJECT_ID")
 STYTCH_SECRET = os.getenv("STYTCH_SECRET")
+STYTCH_PUBLIC_TOKEN = os.getenv("STYTCH_PUBLIC_TOKEN")
 if STYTCH_PROJECT_ID is None:
     sys.exit("STYTCH_PROJECT_ID env variable must be set before running")
 if STYTCH_SECRET is None:
     sys.exit("STYTCH_SECRET env variable must be set before running")
+if STYTCH_PUBLIC_TOKEN is None:
+    sys.exit("STYTCH_PUBLIC_TOKEN env variable must be set before running")
 
 # NOTE: Set environment to "live" if you want to hit the live api
 stytch_client = B2BClient(
@@ -65,14 +68,11 @@ def org_index(slug: str):
         return "Error fetching org"
 
     organization = resp.organizations[0]
-    return organization.json()
-
-    # return render_template(
-    #         'organizationLogin.html',
-    #         public_token=STYTCH_PUBLIC_TOKEN,
-    #         org_name=organization.organization_name,
-    #         sso_connections=organization.sso_active_connections
-    # )
+    connection_id = organization.sso_active_connections[0].connection_id
+    return {
+        "sso_url": f"https://test.stytch.com/v1/public/sso/start?connection_id={connection_id}&public_token={STYTCH_PUBLIC_TOKEN}",
+        "org_name": organization.organization_name,
+    }
 
 
 # run's the app on the provided host & port
