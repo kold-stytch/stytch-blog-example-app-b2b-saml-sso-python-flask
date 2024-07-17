@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask, request, session
+from flask import Flask, request, session, redirect, make_response
 from flask_cors import CORS
 from stytch import B2BClient
 
@@ -36,24 +36,25 @@ stytch_client = B2BClient(
 )
 
 app = Flask(__name__)
+app.secret_key = "some-secret-key"
 CORS(app, supports_credentials=True)  # This will enable CORS for all routes
 
 
 @app.route("/authenticate", methods=["GET"])
 def authenticate():
+    response = make_response(redirect("http://localhost:5173/"))
     token_type = request.args["stytch_token_type"]
     if token_type == "sso":
-        resp = stytch_client.sso.authenticate(sso_token=request.arg["token"])
+        resp = stytch_client.sso.authenticate(sso_token=request.args["token"])
         if resp.status_code != 200:
             return "something went wrong authenticating token"
     else:
         # handle other authentication method callbacks
         return "unsupported auth method"
 
-    # member is successfully logged in
-    member = resp.member
-    session["stytch_session"] = resp.session_jwt
-    return member.json()
+    response.set_cookie("stytch_session", resp.session_token, max_age=60 * 60 * 24)
+    response.set_cookie("stytch_session_jwt", resp.session_jwt, max_age=60 * 60 * 24)
+    return response
 
 
 @app.route("/org/<string:slug>", methods=["GET"])
