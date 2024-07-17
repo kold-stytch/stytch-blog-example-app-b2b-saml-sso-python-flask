@@ -27,7 +27,7 @@ function B2BLogin() {
         <h2 className="login-title">
           Continue to {orgName}
         </h2>
-        <a href={orgUrl} className="login-button">
+        <a href={orgUrl} className="login-link">
           Continue with SAML SSO
         </a>
       </div>
