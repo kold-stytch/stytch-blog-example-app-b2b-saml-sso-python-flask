@@ -4,4 +4,4 @@ api/sso-py-flask-saml
 
 api/.env
 
-ui-vite/.env
+ui/.env
