@@ -36,12 +36,12 @@ function B2BLogin() {
 }
 
 function Home() {
-  return <p>Visit /org/:orgId to continue replacing your orgId with the one set in the Stytch Dashboard (e.g. /org/test-org)</p>;
+  return <h3>Visit /org/:orgId to continue replacing your orgId with the one set in the Stytch Dashboard (e.g. /org/test-org)</h3>;
 }
 
 function App() {
   const stytch = useStytchB2BClient();
-  const { session } = useStytchMemberSession();
+  const { session, fromCache } = useStytchMemberSession();
 
   const logout = useCallback(() => {
     stytch.session.revoke();
@@ -64,7 +64,7 @@ function App() {
 
       <Routes>
         <Route path="/org/:orgId" element={<B2BLogin />} />
-        <Route path="/" element={session ? <ProductsList /> : <Home />} />
+        <Route path="/" element={session || fromCache ? <ProductsList /> : <Home />} />
       </Routes>
     </Container>
   );
